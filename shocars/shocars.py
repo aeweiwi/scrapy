@@ -86,7 +86,6 @@ class shocars(CrawlSpider):
         for key, val in att.iteritems():
             print '{0}:    {1}'.format(key, val)
 
-        x = 1
         yield att
 
 
