@@ -1,0 +1,4 @@
+#*
+*.pyc
+/shocars/#shocars.py#
+*.csv
