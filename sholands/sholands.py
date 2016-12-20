@@ -21,7 +21,7 @@ import settings as mysettings
 
 from kitchen.text.converters import getwriter
 
-# sys.setdefaultencoding("utf-8")
+sys.setdefaultencoding("utf-8")
 
 import re
 import numpy
@@ -30,7 +30,7 @@ from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 
 class sholands(CrawlSpider):
     name = "sholands"
-    keys = [u'العنوان', u'المساحه', u'السعر', u'تقع على',
+    keys = [u'العنوان', u'المساحة', u'السعر', u'تقع على',
             u'محاطه ب', u'تصلها المياه', u'تصلها الكهرباء',
             u'صالحه للزراعه', u'صالحه للبناء التجاري',
             u'صالحه لبناء سكن', u'اسم المُعلن', u'العنوان',
@@ -109,7 +109,7 @@ class sholands(CrawlSpider):
 
         for key, val in att.iteritems():
 
-            print u'{0}:    {1}'.format(key, val)
+            print '{0}: {1}'.format(key.encode('utf-8'), val.encode('utf-8'))
 
         yield att
 
