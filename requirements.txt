@@ -1,0 +1,11 @@
+redis
+pandas
+scrapy
+numpy
+scipy
+csv
+codecs
+selenium
+lxml
+scrapyjs
+flask
