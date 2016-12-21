@@ -13,11 +13,10 @@ from scrapy.http import Request
 import pandas as pd
 from scrapy.linkextractors import LinkExtractor
 import sys
-import sys
 from scrapy.settings import Settings
 import settings as mysettings
 
-from kitchen.text.converters import getwriter
+# from kitchen.text.converters import getwriter
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -92,15 +91,13 @@ class shocars(CrawlSpider):
 
 if __name__ == '__main__':
 
-    UTF8Writer = getwriter('utf8')
-    sys.stdout = UTF8Writer(sys.stdout)
+    #UTF8Writer = getwriter('utf8')
+    #sys.stdout = UTF8Writer(sys.stdout)
 
     crawler_settings = Settings()
     crawler_settings.setmodule(mysettings)
     process = CrawlerProcess(settings=crawler_settings)
 
-    import ipdb
-    ipdb.set_trace()
     #ss = get_project_settings()
     #process = CrawlerProcess(ss)
     #import sys
