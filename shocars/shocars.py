@@ -4,7 +4,6 @@ from scrapy.utils.project import get_project_settings
 import scrapy
 from selenium import webdriver
 from scrapy.crawler import CrawlerProcess
-import codecs
 from urlparse import urljoin
 from pandas.compat import u
 from scrapy.spiders import CrawlSpider
@@ -13,15 +12,8 @@ from scrapy.http import Request
 import pandas as pd
 from scrapy.linkextractors import LinkExtractor
 import sys
-from scrapy.settings import Settings
-import settings as mysettings
-
-# from kitchen.text.converters import getwriter
 reload(sys)
 sys.setdefaultencoding("utf-8")
-
-import re
-import numpy
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 
 
@@ -91,18 +83,23 @@ class shocars(CrawlSpider):
 
 if __name__ == '__main__':
 
-    #UTF8Writer = getwriter('utf8')
-    #sys.stdout = UTF8Writer(sys.stdout)
+    try:
+        from scrapy.settings import Settings
+        import settings as mysettings
+        # UTF8Writer = getwriter('utf8')
+        # sys.stdout = UTF8Writer(sys.stdout)
 
-    crawler_settings = Settings()
-    crawler_settings.setmodule(mysettings)
-    process = CrawlerProcess(settings=crawler_settings)
+        crawler_settings = Settings()
+        crawler_settings.setmodule(mysettings)
+        process = CrawlerProcess(settings=crawler_settings)
 
-    #ss = get_project_settings()
-    #process = CrawlerProcess(ss)
-    #import sys
+        #ss = get_project_settings()
+        #process = CrawlerProcess(ss)
+        #import sys
 
-    process.crawl('shocars')
-    # process.crawl(shocars)
-    # the script will block here until the crawling is finished
-    process.start()
+        process.crawl('shocars')
+        # process.crawl(shocars)
+        # the script will block here until the crawling is finished
+        process.start()
+    except Exception as e:
+        print 'something stupid happened'
