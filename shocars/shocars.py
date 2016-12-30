@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import luigi
+import re
 from scrapy.utils.project import get_project_settings
 import scrapy
-from selenium import webdriver
+# from selenium import webdrive
 from scrapy.crawler import CrawlerProcess
 from urlparse import urljoin
 from pandas.compat import u
@@ -12,6 +14,7 @@ from scrapy.http import Request
 import pandas as pd
 from scrapy.linkextractors import LinkExtractor
 import sys
+from datetime import datetime
 reload(sys)
 sys.setdefaultencoding("utf-8")
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
@@ -81,8 +84,43 @@ class shocars(CrawlSpider):
         yield att
 
 
-if __name__ == '__main__':
+class luigi_cars_crawler(luigi.Task):
 
+    def requires(self):
+        return []
+
+    def output(self):
+        today = datetime.now().strftime('%Y-%m-%d')
+        output_path = 'out_{0}.csv'.format(today)
+        return luigi.LocalTarget(output_path)
+
+    def run(self):
+        try:
+            from scrapy.settings import Settings
+            import settings as mysettings
+            # UTF8Writer = getwriter('utf8')
+            # sys.stdout = UTF8Writer(sys.stdout)
+
+            crawler_settings = Settings()
+            crawler_settings.setmodule(mysettings)
+            process = CrawlerProcess(settings=crawler_settings)
+
+            # ss = get_project_settings()
+            # process = CrawlerProcess(ss)
+            # import sys
+
+            process.crawl('shocars')
+            # process.crawl(shocars)
+            # the script will block here until the crawling is finished
+            process.start()
+        except Exception as e:
+            print 'something stupid happened {0}'.format(e)
+
+
+if __name__ == '__main__':
+    luigi.run(["--local-scheduler"], main_task_cls=luigi_cars)
+
+    """
     try:
         from scrapy.settings import Settings
         import settings as mysettings
@@ -93,9 +131,9 @@ if __name__ == '__main__':
         crawler_settings.setmodule(mysettings)
         process = CrawlerProcess(settings=crawler_settings)
 
-        #ss = get_project_settings()
-        #process = CrawlerProcess(ss)
-        #import sys
+        # ss = get_project_settings()
+        # process = CrawlerProcess(ss)
+        # import sys
 
         process.crawl('shocars')
         # process.crawl(shocars)
@@ -103,3 +141,4 @@ if __name__ == '__main__':
         process.start()
     except Exception as e:
         print 'something stupid happened'
+    """

@@ -5,7 +5,7 @@ import json
 class Analyize(Luigi.Task):
 
     def requires(self):
-        pass
+        return
 
     def output(self):
         pass

@@ -29,7 +29,7 @@ class ShocarsPipeline(object):
 
     def __init__(self):
         today = datetime.now().strftime('%Y-%m-%d')
-        self.ff = codecs.open('out.csv{0}'.format(today),
+        self.ff = codecs.open('out_{0}.csv'.format(today),
                               'w',
                               encoding='utf-8')
         line = ','.join(self.keys)
