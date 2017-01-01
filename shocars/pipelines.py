@@ -13,6 +13,9 @@ from datetime import datetime
 
 
 class ShocarsPipeline(object):
+    today = datetime.now().strftime('%Y-%m-%d')
+    output_path = 'out_{0}.csv'.format(today)
+
     keys = [u'لون السيارة', u'نوع الوقود', u'أصل السيارة', u'رخصة السيارة', u'نوع الجير',
             u'الزجاج', u'قوة الماتور', u'عداد السيارة', u'عدد الركاب', u'السعر',
             u'وسيلة الدفع', u'السيارة معروضة', u'أصحاب سابقون', u'اسم المُعلن',
@@ -28,8 +31,8 @@ class ShocarsPipeline(object):
                  u'المدينه']
 
     def __init__(self):
-        today = datetime.now().strftime('%Y-%m-%d')
-        self.ff = codecs.open('out_{0}.csv'.format(today),
+
+        self.ff = codecs.open(self.output_path,
                               'w',
                               encoding='utf-8')
         line = ','.join(self.keys)

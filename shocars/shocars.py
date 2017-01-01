@@ -80,7 +80,6 @@ class shocars(CrawlSpider):
         for key, val in att.iteritems():
             print '{0}:    {1}'.format(key, val)
 
-        x = 1
         yield att
 
 
@@ -118,7 +117,7 @@ class luigi_cars_crawler(luigi.Task):
 
 
 if __name__ == '__main__':
-    luigi.run(["--local-scheduler"], main_task_cls=luigi_cars)
+    luigi.run(["--local-scheduler"], main_task_cls=luigi_cars_crawler)
 
     """
     try:

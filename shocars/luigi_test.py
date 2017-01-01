@@ -1,14 +1,25 @@
 import luigi
-import json
+from shocars import luigi_cars_crawler
+import pandas as pd
 
 
-class Analyize(Luigi.Task):
+class Analyize(luigi.Task):
 
     def requires(self):
-        return
+        return luigi_cars_crawler()
 
     def output(self):
-        pass
+        luigi.LocalTarget('stat.csv')
 
     def run(self):
-        pass
+
+        df = pd.read_csv(self.input().open('r'),
+                         error_bad_lines=False,
+                         encoding='utf-8')
+
+        output_df = df.head(5)
+        output_df.to_csv(self.output())
+        output_df.to_csv('stat.csv')
+
+if __name__ == '__main__':
+    luigi.run(["--local-scheduler"], main_task_cls=Analyize)
