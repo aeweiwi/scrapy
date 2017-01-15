@@ -82,7 +82,7 @@ class to_mydb(luigi.Task):
                                  slice(None)],
                          'shocars',
                          index=False,
-                         keys=[u'تاريخ نشر الإعلان',  u'صفحه'],
+                         keys=['hash'],
                          if_exists='append')
             except Exception as e:
                 errors += 1

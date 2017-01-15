@@ -77,8 +77,12 @@ class shocars(CrawlSpider):
         att.update({u'موديل': model})
         att.update({u'نوع السياره': title})
 
+        hash_str = ''
         for key, val in att.iteritems():
             print '{0}:    {1}'.format(key, val)
+            hash_str = hash_str + '_' + val
+
+        att.update({u'hash': u'{0}'.format(hash(hash_str))})
 
         yield att
 
