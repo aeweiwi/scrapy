@@ -8,6 +8,9 @@ import sys
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF-8')
 from sqlalchemy.types import to_instance, TypeEngine
+import datetime
+import matplotlib.pyplot as plt
+import sqlite3
 
 
 class Analyize(luigi.Task):
@@ -29,29 +32,45 @@ class Analyize(luigi.Task):
         output_df.to_csv('stat.csv')
 
 
-class to_mydb(luigi.Task):
-
-    chunksize = 1
-
-    # def output(self):
-    #    return self.pql
+class daily_analysis(luigi.Task):
 
     def requires(self):
+        return to_mydb()
 
+    def output(self):
+        today = datetime.datetime.now()
+        today = today.strftime('%Y-%m-%d')
+        return luigi.LocalTarget('daily_stat_{0}.pdf'.format(today))
+
+    def run(self):
+        con = sqlite3.connect("my_db.sqlite")
+        df = pd.read_sql_query(
+            """SELECT * from shocars""", con)
+
+        import ipdb
+        ipdb.set_trace()
+        daily_stat = df.groupby(df.columns[17])[df.columns[0]].count()
+        stat_plot = daily_stat.plot(kind='bar', figsize=(6, 6),
+                                    legend=False,
+                                    use_index=False,
+                                    subplots=True,
+                                    colormap="Pastel1")
+        # fig = stat_plot[0].get_figure()
+        with self.output().open('w') as out_file:
+            plt.savefig(out_file)
+
+
+class to_mydb(luigi.Task):
+    chunksize = 1
+
+    def output(self):
+        today = datetime.datetime.now()
+        today = today.strftime('%Y-%m-%d')
+        return luigi.LocalTarget('mydb_output_{0}.log'.format(
+            today))
+
+    def requires(self):
         return luigi_cars_crawler()
-
-    def to_sql_k(self, frame, name, if_exists='fail', index=True,
-                 index_label=None, schema=None, chunksize=None,
-                 dtype=None, **kwargs):
-
-        table = pd.io.sql.SQLTable(name, self.pandas_sql,
-                                   frame=frame, index=index,
-                                   if_exists=if_exists,
-                                   index_label=index_label,
-                                   schema=schema,
-                                   dtype=dtype, **kwargs)
-        table.create()
-        table.insert(chunksize)
 
     def run(self):
 
@@ -74,7 +93,7 @@ class to_mydb(luigi.Task):
         df = pd.read_csv(self.input().open('r'),
                          error_bad_lines=False,
                          encoding='utf-8')
-        errors = 0
+
         for i in range(0, df.shape[0], self.chunksize):
             try:
                 to_sql_k(pandas_sql,
@@ -84,12 +103,15 @@ class to_mydb(luigi.Task):
                          index=False,
                          keys=['hash'],
                          if_exists='append')
-            except Exception as e:
-                errors += 1
-                print 'duplicate found {0}\n{1}'.format(errors, e)
 
+            except Exception as e:
+                # print e
+                pass
+        with self.output().open('w') as out_file:
+            out_file.write("Done")
 
 if __name__ == '__main__':
+    # luigi.run(["--local-scheduler"], main_task_cls=to_mydb)
     # luigi.run(["--local-scheduler"], main_task_cls=Analyize)
 
-    luigi.run(["--local-scheduler"], main_task_cls=to_mydb)
+    luigi.run(["--local-scheduler"], main_task_cls=daily_analysis)
